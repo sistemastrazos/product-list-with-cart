@@ -151,6 +151,11 @@ function updateGallery(sortedProducts) {
   sortedProducts.forEach(product => gallery.appendChild(product)); // Añadir productos ordenados
 }
 
+const sortRandom = () => {
+  const shuffledProducts = products.sort(() => Math.random() - 0.5);
+  updateGallery(shuffledProducts);
+};
+
 const sortByName = () => {
   const sortedProducts = products.sort((a, b) => {
     const nameA = a.querySelector('.product-name').textContent.trim().toLowerCase();
@@ -181,9 +186,10 @@ const setFilters = event => {
 
   event.target.classList.add('filter-active');
 
-  if (filter === 'default') updateGallery(products);
-  else if (filter === 'name') sortByName(products);
-  else if (filter === 'price') sortByPrice(products);
+  const productsCopy = [...products];
+  if (filter === 'default') sortRandom(products);
+  else if (filter === 'name') sortByName(productsCopy);
+  else if (filter === 'price') sortByPrice(productsCopy);
 };
 
 filtersElement.addEventListener('click', setFilters);
