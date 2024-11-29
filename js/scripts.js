@@ -5,6 +5,7 @@ const cartImageElement = document.getElementById('cart-image');
 const cartQuantityElement = document.getElementById('cart-quantity');
 const totalOrderContainerElement = document.getElementById('total-order-container');
 const totalOrderElement = document.getElementById('total-order');
+const products = [...gallery.querySelectorAll('.product')];
 
 let cartContent = [];
 
@@ -61,12 +62,7 @@ const updateCartInDOM = () => {
 
     newCartProductIconRemove.addEventListener('click', () => removeProductFromCart(product.name));
 
-    newCartProductInfo.append(
-      newCartProductQuantity,
-      newCartProductPriceSingle,
-      newCartProductPriceTotal,
-      newCartProductIconRemove
-    );
+    newCartProductInfo.append(newCartProductQuantity, newCartProductPriceSingle, newCartProductPriceTotal, newCartProductIconRemove);
 
     newCartProduct.append(newCartProductInfo);
 
@@ -150,6 +146,30 @@ const handleGalleryClick = event => {
   }
 };
 
+function updateGallery(sortedProducts) {
+  gallery.textContent = ''; // Limpiar la galería
+  sortedProducts.forEach(product => gallery.appendChild(product)); // Añadir productos ordenados
+}
+
+const sortByName = () => {
+  const sortedProducts = products.sort((a, b) => {
+    const nameA = a.querySelector('.product-name').textContent.trim().toLowerCase();
+    const nameB = b.querySelector('.product-name').textContent.trim().toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+  updateGallery(sortedProducts);
+};
+
+// Función para ordenar por precio
+const sortByPrice = () => {
+  const sortedProducts = products.sort((a, b) => {
+    const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('$', ''));
+    const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('$', ''));
+    return priceA - priceB;
+  });
+  updateGallery(sortedProducts);
+};
+
 const setFilters = event => {
   const filter = event.target.dataset.filter;
 
@@ -160,6 +180,10 @@ const setFilters = event => {
   }
 
   event.target.classList.add('filter-active');
+
+  if (filter === 'default') updateGallery(products);
+  else if (filter === 'name') sortByName(products);
+  else if (filter === 'price') sortByPrice(products);
 };
 
 filtersElement.addEventListener('click', setFilters);
